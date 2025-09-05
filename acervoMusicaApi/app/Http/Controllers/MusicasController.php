@@ -7,43 +7,148 @@ use Illuminate\Http\Request;
 
 class MusicasController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        // Buscando todas as musicas
+        $registros = musicas::all();
+
+        // Contando o número de registros
+        $contador = $registros->count();
+
+        // Verificando se há registros
+        if($contador > 0) {
+            return reponse()->json([
+                'sucess' => true,
+                'message' => 'Musicas encontradas com sucesso!',
+                'data' => $registros,
+                'total' => $contador
+            ] , 200); //Retorna HTTP 200 (OK) com os dados e a contagem
+        } else {
+            return reponse()->json([
+                'sucess' => false,
+                'message' => 'Nenhuma musica encontrado.',
+            ], 404); // Retorna HTTP 404 (Not Found) se não houver registros
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        // Validação dos dados recebidos
+        $validador = Validator::make($request->all(), [
+            'nome' => 'required',
+            'cantor' => 'required',
+            'ano_lancamento' => 'required',
+            'album' => 'required'
+        ]);
+
+        if($validador->fails()){
+            return response()->json([
+                'success' => false,
+                'message' => 'Registro inválidos',
+                'errors' => $validador->errors()
+            ], 400); // Retorna HTTP 400 (Bad Request) se houver erro de validação
+        }
+    
+        //Criando uma musica no banco de dados
+        $registros = musicas::create($request->all());
+
+        if($registros){
+            return response()->json([
+                'success' => true,
+                'message' => 'Musica cadastrados com sucesso!',
+                'data' => $registros
+            ], 201);
+        } else{
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao cadastrar a música'
+            ], 500); // Retorna HTTP 500 (Internal Server Error) se p cadastro falhar
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(musicas $musicas)
+    public function show($id)
     {
-        //
+        // Buscando uma musica pelo ID
+        $registros = musicas::find($id);
+
+        // Verificando se a musica foi encontrado
+        if($registros) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Musica localizado com sucesso!',
+                'data' => $registros
+            ], 200); // Retorna HTTP 200 (OK) com os dados do produto
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => 'Musica não localizado.',
+            ], 404); // Returna HTTP 404 (Not Found) se o produto não for encontrado
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, musicas $musicas)
+    public function update(Request $request, string $id)
     {
-        //
+        $validador = Validador::make($request->all(), [
+            'nome' => 'required',
+            'cantor' => 'required',
+            'ano_lancamento' => 'required',
+            'album' => 'required'
+        ]);
+
+        if($validador->fails()){
+            return response()->json([
+                'success' => false,
+                'message' => 'Registros inválidos',
+                'errors' => $validador->errors()
+            ], 400); // Retorna HTTP 400 se houver erro de validação
+        }
+
+        // Encontrando uma musica no banco
+        $registrosBanco = musicas::find($id);
+
+        if(!$registrosBanco){
+            return response()->json([
+                'success' => false,
+                'message' => 'Musica não encontrado'
+            ], 404);
+        }
+
+        // Atualizando os dados
+        $registrosBanco->nome = $request->nome;
+        $registrosBanco->cantor = $request->cantor;
+        $registrosBanco->ano_lancamento = $request->ano_lancamento;
+        $registrosBanco->album = $request->album;
+
+        // Salvando as alterações
+        if($registrosBanco->save()){
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Musica atualizado com sucesso!',
+                    'data' => $registrosBanco
+            ], 200);
+        } else{
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao atualizar a musica'
+            ], 500); // Retorna HTTP 500 se houver erro ao salver
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(musicas $musicas)
+    public function destroy($id)
     {
-        //
+        // Encontrando uma musica
+        $registros = musicas::find($id);
+
+        if(!$registros){
+            return response()->json([
+                'success' => true,
+                'message' => 'Musica deletado com sucesso'
+            ], 200); // Retorna HTTP 200 se a exclusão for bem-sucedida
+        }
+
+        return respnse()->json([
+            'success' => false,
+            'message' => 'Erro ao deletar uma musica'
+        ], 500); // Retorna HTTP 500 se houver erro na exclusão
     }
 }
