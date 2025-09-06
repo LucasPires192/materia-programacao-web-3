@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class musicas extends Model
+class Musicas extends Model
 {
     protected $fillable = [
         'nome',
