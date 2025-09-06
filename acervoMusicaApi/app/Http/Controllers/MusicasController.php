@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
-use Illuminate\Http\Facades\Validator;
+use Illuminate\Support\Facades\Validator;
 
 class MusicasController extends Controller
 {
@@ -42,14 +42,14 @@ class MusicasController extends Controller
             'nome' => 'required',
             'cantor' => 'required',
             'ano_lancamento' => 'required',
-            'album' => 'required'
+            'album' => 'required',
         ]);
 
         if($validador->fails()){
             return response()->json([
                 'success' => false,
                 'message' => 'Registro inválidos',
-                'errors' => $validador->errors()
+                'errors' => $validador->errors(),
             ], 400); // Retorna HTTP 400 (Bad Request) se houver erro de validação
         }
     
@@ -60,12 +60,12 @@ class MusicasController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Musica cadastrados com sucesso!',
-                'data' => $registros
+                'data' => $registros,
             ], 201);
         } else{
             return response()->json([
                 'success' => false,
-                'message' => 'Erro ao cadastrar a música'
+                'message' => 'Erro ao cadastrar a música',
             ], 500); // Retorna HTTP 500 (Internal Server Error) se p cadastro falhar
         }
     }
@@ -92,7 +92,7 @@ class MusicasController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $validador = Validador::make($request->all(), [
+        $validador = Validator::make($request->all(), [
             'nome' => 'required',
             'cantor' => 'required',
             'ano_lancamento' => 'required',
@@ -150,7 +150,7 @@ class MusicasController extends Controller
             ], 200); // Retorna HTTP 200 se a exclusão for bem-sucedida
         }
 
-        return respnse()->json([
+        return response()->json([
             'success' => false,
             'message' => 'Erro ao deletar uma musica'
         ], 500); // Retorna HTTP 500 se houver erro na exclusão
