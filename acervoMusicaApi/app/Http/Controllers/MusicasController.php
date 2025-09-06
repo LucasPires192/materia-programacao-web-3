@@ -2,29 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\musicas;
+use App\Models\Musicas;
 use Illuminate\Http\Request;
+
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Illuminate\Http\Facades\Validator;
 
 class MusicasController extends Controller
 {
     public function index()
     {
         // Buscando todas as musicas
-        $registros = musicas::all();
+        $registros = Musicas::all();
 
         // Contando o número de registros
         $contador = $registros->count();
 
         // Verificando se há registros
         if($contador > 0) {
-            return reponse()->json([
+            return response()->json([
                 'sucess' => true,
                 'message' => 'Musicas encontradas com sucesso!',
                 'data' => $registros,
                 'total' => $contador
             ] , 200); //Retorna HTTP 200 (OK) com os dados e a contagem
         } else {
-            return reponse()->json([
+            return response()->json([
                 'sucess' => false,
                 'message' => 'Nenhuma musica encontrado.',
             ], 404); // Retorna HTTP 404 (Not Found) se não houver registros
@@ -50,7 +54,7 @@ class MusicasController extends Controller
         }
     
         //Criando uma musica no banco de dados
-        $registros = musicas::create($request->all());
+        $registros = Musicas::create($request->all());
 
         if($registros){
             return response()->json([
@@ -69,7 +73,7 @@ class MusicasController extends Controller
     public function show($id)
     {
         // Buscando uma musica pelo ID
-        $registros = musicas::find($id);
+        $registros = Musicas::find($id);
 
         // Verificando se a musica foi encontrado
         if($registros) {
@@ -77,12 +81,12 @@ class MusicasController extends Controller
                 'success' => true,
                 'message' => 'Musica localizado com sucesso!',
                 'data' => $registros
-            ], 200); // Retorna HTTP 200 (OK) com os dados do produto
+            ], 200); // Retorna HTTP 200 (OK) com os dados da musica
         }else{
             return response()->json([
                 'success' => false,
                 'message' => 'Musica não localizado.',
-            ], 404); // Returna HTTP 404 (Not Found) se o produto não for encontrado
+            ], 404); // Returna HTTP 404 (Not Found) se a musica não for encontrado
         }
     }
 
@@ -104,7 +108,7 @@ class MusicasController extends Controller
         }
 
         // Encontrando uma musica no banco
-        $registrosBanco = musicas::find($id);
+        $registrosBanco = Musicas::find($id);
 
         if(!$registrosBanco){
             return response()->json([
@@ -137,7 +141,7 @@ class MusicasController extends Controller
     public function destroy($id)
     {
         // Encontrando uma musica
-        $registros = musicas::find($id);
+        $registros = Musicas::find($id);
 
         if(!$registros){
             return response()->json([
