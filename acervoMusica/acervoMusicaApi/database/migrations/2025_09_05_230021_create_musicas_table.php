@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nome');
             $table->string('cantor');
-            $table->string('ano_lancamento');
+            $table->datetime('ano_lancamento');
             $table->string('album');
             $table->timestamps();
         });
