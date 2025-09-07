@@ -150,6 +150,14 @@ class MusicasController extends Controller
             ], 200); // Retorna HTTP 200 se a exclusão for bem-sucedida
         }
 
+        // Deletando uma musica
+        if ($registros->delete()){
+            return response()->json([
+                'success' => true,
+                'message' => 'Musica deletada com sucesso'
+            ],200); // Retorna HTTP 200 se a exclusão for bem-sucedida
+        }
+
         return response()->json([
             'success' => false,
             'message' => 'Erro ao deletar uma musica'
